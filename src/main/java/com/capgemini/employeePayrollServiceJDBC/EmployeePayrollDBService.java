@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmployeePayrollDBService {
-	
+
 	private PreparedStatement employeePayrollDataStatement;
 
 	public List<EmployeePayrollData> readData() {
@@ -45,7 +45,7 @@ public class EmployeePayrollDBService {
 	}
 
 	public int updateEmployeeData(String name, double basic_pay) throws EmployeePayrollException {
-		return this.updateEmployeeDataUsingStatement(name, basic_pay);
+		return this.updateEmployeeDataUsingPreparedStatement(name, basic_pay);
 	}
 
 	private int updateEmployeeDataUsingStatement(String name, double basic_pay) throws EmployeePayrollException {
@@ -58,45 +58,55 @@ public class EmployeePayrollDBService {
 		}
 	}
 
+	private int updateEmployeeDataUsingPreparedStatement(String name, double salary) throws EmployeePayrollException {
+		try {
+			Connection connection = this.getConnection();
+			String sql = String.format("UPDATE employee_payroll SET basic_pay=%.2f WHERE name='%s' ;", salary, name);
+
+			PreparedStatement preparedStatement = connection.prepareStatement(sql);
+			return preparedStatement.executeUpdate(sql);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new EmployeePayrollException("unable to create prepared statement");
+		}
+	}
+
 	public List<EmployeePayrollData> getEmployeePayrollData(String name) throws EmployeePayrollException {
-		List<EmployeePayrollData> employeePayrollDataList=null;
-		if(this.employeePayrollDataStatement==null)
+		List<EmployeePayrollData> employeePayrollDataList = null;
+		if (this.employeePayrollDataStatement == null)
 			this.prepareStatementForEmployeeData();
 		try {
 			employeePayrollDataStatement.setString(1, name);
-			ResultSet resultSet=employeePayrollDataStatement.executeQuery();
-			employeePayrollDataList=this.getEmployeePayrollData(resultSet);
-		}
-		catch(SQLException e) {
+			ResultSet resultSet = employeePayrollDataStatement.executeQuery();
+			employeePayrollDataList = this.getEmployeePayrollData(resultSet);
+		} catch (SQLException e) {
 			throw new EmployeePayrollException("unable to execute query");
 		}
 		return employeePayrollDataList;
 	}
 
 	private List<EmployeePayrollData> getEmployeePayrollData(ResultSet resultSet) throws EmployeePayrollException {
-		List<EmployeePayrollData> employeePayrollDataList=new ArrayList<>();
+		List<EmployeePayrollData> employeePayrollDataList = new ArrayList<>();
 		try {
-			while(resultSet.next()) {
-				int id=resultSet.getInt("id");
-				String name=resultSet.getString("name");
-				double basic_pay=resultSet.getDouble("basic_pay");
-				char gender=resultSet.getString("gender").charAt(0);
-				employeePayrollDataList.add(new EmployeePayrollData(id,name,basic_pay,gender));
+			while (resultSet.next()) {
+				int id = resultSet.getInt("id");
+				String name = resultSet.getString("name");
+				double basic_pay = resultSet.getDouble("basic_pay");
+				char gender = resultSet.getString("gender").charAt(0);
+				employeePayrollDataList.add(new EmployeePayrollData(id, name, basic_pay, gender));
 			}
-		}
-		catch(SQLException e) {
+		} catch (SQLException e) {
 			throw new EmployeePayrollException("unable to read data from database");
 		}
 		return employeePayrollDataList;
 	}
 
-	private void prepareStatementForEmployeeData() throws EmployeePayrollException{
+	private void prepareStatementForEmployeeData() throws EmployeePayrollException {
 		try {
-			Connection connection=this.getConnection();
-			String sql="SELECT * FROM employee_payroll WHERE name=?";
-			employeePayrollDataStatement=connection.prepareStatement(sql);
-		}
-		catch(SQLException e) {
+			Connection connection = this.getConnection();
+			String sql = "SELECT * FROM employee_payroll WHERE name=?";
+			employeePayrollDataStatement = connection.prepareStatement(sql);
+		} catch (SQLException e) {
 			throw new EmployeePayrollException("unable to prepare statement");
 		}
 	}
