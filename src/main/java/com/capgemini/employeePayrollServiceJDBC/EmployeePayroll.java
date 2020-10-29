@@ -38,11 +38,13 @@ public class EmployeePayroll {
 		employeePayrollList.add(new EmployeePayrollData(empId, name, salary));
 	}
 
-	public long readEmployeePayrollData(IOService io) {
-		if (io.equals(IOService.FILE_IO)) {
-			this.employeePayrollList = new EmployeePayrollFileIOService().readData();
-		}
-		return employeePayrollList.size();
+	public List<EmployeePayrollData> readEmployeePayrollData(IOService io) {
+		List<EmployeePayrollData> employePayrollDataList=new ArrayList<EmployeePayrollData>();
+		if(io.equals(IOService.FILE_IO))
+			employePayrollDataList=new EmployeePayrollFileIOService().readData();
+		if(io.equals(IOService.DB_IO))
+			employePayrollDataList=new EmployeePayrollDBService().readData();
+		return employePayrollDataList;
 	}
 
 	public void writeEmployeePayrollData(IOService io) {

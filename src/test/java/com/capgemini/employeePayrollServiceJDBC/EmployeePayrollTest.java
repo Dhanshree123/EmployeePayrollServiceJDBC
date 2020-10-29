@@ -24,9 +24,17 @@ public class EmployeePayrollTest {
 	@Test
 	public void givenFileReadingFromFileShouldMatchEmployeeCount() {
 		EmployeePayroll employeePayroll = new EmployeePayroll();
-		long entries = employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.FILE_IO);
+		long entries = employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.FILE_IO).size();
 		System.out.println("Number of entries:- " + entries);
 		Assert.assertEquals(3, entries);
+	}
+	
+	@Test
+	public void givenEmployeePayrollInDB_whenRetrieved_ShouldMatchEmployeeCount() {
+		EmployeePayroll employeePayroll = new EmployeePayroll();
+		long entries = employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO).size();
+		System.out.println("Number of entries:- " + entries);
+		Assert.assertEquals(4, entries);
 	}
 
 }

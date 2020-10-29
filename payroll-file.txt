@@ -1,0 +1,3 @@
+EmployeeId =1 ,name=Emma Stone ,salary=50000.0
+EmployeeId =2 ,name=John Snow ,salary=55000.0
+EmployeeId =3 ,name=Ryan Ice ,salary=50000.0
