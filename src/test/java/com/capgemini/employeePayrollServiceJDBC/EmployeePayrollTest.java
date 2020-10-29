@@ -1,10 +1,8 @@
 package com.capgemini.employeePayrollServiceJDBC;
 
 import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
-
 
 public class EmployeePayrollTest {
 
@@ -28,13 +26,24 @@ public class EmployeePayrollTest {
 		System.out.println("Number of entries:- " + entries);
 		Assert.assertEquals(3, entries);
 	}
-	
+
 	@Test
 	public void givenEmployeePayrollInDB_whenRetrieved_ShouldMatchEmployeeCount() {
 		EmployeePayroll employeePayroll = new EmployeePayroll();
 		long entries = employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO).size();
 		System.out.println("Number of entries:- " + entries);
 		Assert.assertEquals(4, entries);
+	}
+
+	@Test
+	public void givenNewSalaryForEmployee_WhenUpdated_ShouldSyncWithDB() throws EmployeePayrollException {
+		EmployeePayroll employeePayroll = new EmployeePayroll();
+		long entries = employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO).size();
+		Assert.assertEquals(4, entries);
+		employeePayroll.updateEmployeeSalary("Terisa", 300000.00);
+		boolean result = employeePayroll.checkEmployeePayrollInSyncWithDB("Terisa");
+		Assert.assertTrue(result);
+
 	}
 
 }
