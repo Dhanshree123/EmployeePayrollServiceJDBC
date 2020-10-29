@@ -18,7 +18,7 @@ public class EmployeePayroll {
 	}
 
 	public EmployeePayroll() {
-		employeePayrollDBService = new EmployeePayrollDBService();
+		employeePayrollDBService=EmployeePayrollDBService.getInstance();
 	}
 
 	public static void main(String[] args) {
@@ -44,7 +44,7 @@ public class EmployeePayroll {
 		if (io.equals(IOService.FILE_IO))
 			employeePayrollList = new EmployeePayrollFileIOService().readData();
 		if (io.equals(IOService.DB_IO))
-			employeePayrollList = new EmployeePayrollDBService().readData();
+			employeePayrollList = employeePayrollDBService.readData();
 		return employeePayrollList;
 	}
 

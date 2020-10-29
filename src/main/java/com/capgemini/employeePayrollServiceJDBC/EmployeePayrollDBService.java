@@ -12,6 +12,18 @@ import java.util.List;
 public class EmployeePayrollDBService {
 
 	private PreparedStatement employeePayrollDataStatement;
+	private static EmployeePayrollDBService employeePayrollDBService = null;
+
+	private EmployeePayrollDBService() {
+
+	}
+
+	public static EmployeePayrollDBService getInstance() {
+		if (employeePayrollDBService == null)
+			employeePayrollDBService = new EmployeePayrollDBService();
+
+		return employeePayrollDBService;
+	}
 
 	public List<EmployeePayrollData> readData() {
 		String sql = "SELECT * FROM employee_payroll";
@@ -110,4 +122,5 @@ public class EmployeePayrollDBService {
 			throw new EmployeePayrollException("unable to prepare statement");
 		}
 	}
+
 }
