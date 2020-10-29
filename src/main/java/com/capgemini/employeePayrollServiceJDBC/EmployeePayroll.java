@@ -18,7 +18,7 @@ public class EmployeePayroll {
 	}
 
 	public EmployeePayroll() {
-		employeePayrollDBService=EmployeePayrollDBService.getInstance();
+		employeePayrollDBService = EmployeePayrollDBService.getInstance();
 	}
 
 	public static void main(String[] args) {
@@ -40,7 +40,7 @@ public class EmployeePayroll {
 		employeePayrollList.add(new EmployeePayrollData(empId, name, salary));
 	}
 
-	public List<EmployeePayrollData> readEmployeePayrollData(IOService io) {
+	public List<EmployeePayrollData> readEmployeePayrollData(IOService io) throws EmployeePayrollException {
 		if (io.equals(IOService.FILE_IO))
 			employeePayrollList = new EmployeePayrollFileIOService().readData();
 		if (io.equals(IOService.DB_IO))
@@ -89,6 +89,12 @@ public class EmployeePayroll {
 	public boolean checkEmployeePayrollInSyncWithDB(String name) throws EmployeePayrollException {
 		List<EmployeePayrollData> employeePayrollDataList = employeePayrollDBService.getEmployeePayrollData(name);
 		return employeePayrollDataList.get(0).equals(getEmployeePayrollData(name));
+	}
+
+	public List<EmployeePayrollData> getEmployeeWithJoinedInDateRange() throws EmployeePayrollException {
+		List<EmployeePayrollData> employeePayrollData = employeePayrollDBService
+				.getEmployeePayrollDataWithStartDateInGivenRange();
+		return employeePayrollData;
 	}
 
 }

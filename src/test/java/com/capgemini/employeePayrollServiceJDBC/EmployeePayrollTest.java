@@ -1,6 +1,8 @@
 package com.capgemini.employeePayrollServiceJDBC;
 
 import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,7 +22,7 @@ public class EmployeePayrollTest {
 	}
 
 	@Test
-	public void givenFileReadingFromFileShouldMatchEmployeeCount() {
+	public void givenFileReadingFromFileShouldMatchEmployeeCount() throws EmployeePayrollException {
 		EmployeePayroll employeePayroll = new EmployeePayroll();
 		long entries = employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.FILE_IO).size();
 		System.out.println("Number of entries:- " + entries);
@@ -28,7 +30,7 @@ public class EmployeePayrollTest {
 	}
 
 	@Test
-	public void givenEmployeePayrollInDB_whenRetrieved_ShouldMatchEmployeeCount() {
+	public void givenEmployeePayrollInDB_whenRetrieved_ShouldMatchEmployeeCount() throws EmployeePayrollException {
 		EmployeePayroll employeePayroll = new EmployeePayroll();
 		long entries = employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO).size();
 		System.out.println("Number of entries:- " + entries);
@@ -44,6 +46,16 @@ public class EmployeePayrollTest {
 		boolean result = employeePayroll.checkEmployeePayrollInSyncWithDB("Terisa");
 		Assert.assertTrue(result);
 
+	}
+
+	@Test
+	public void givenDateRange_WhenEmployeeDataRetrieved_ShouldMatch() throws EmployeePayrollException {
+		EmployeePayroll employeePayroll = new EmployeePayroll();
+		List<EmployeePayrollData> employeePayrollDataList = employeePayroll.getEmployeeWithJoinedInDateRange();
+		boolean result = employeePayrollDataList.get(0).name.equals("Bill")
+				&& employeePayrollDataList.get(1).name.equals("Terisa")
+				&& employeePayrollDataList.get(2).name.equals("Charlie");
+		Assert.assertTrue(result);
 	}
 
 }

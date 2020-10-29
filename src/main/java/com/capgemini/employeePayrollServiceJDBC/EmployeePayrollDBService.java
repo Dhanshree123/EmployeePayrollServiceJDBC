@@ -25,19 +25,13 @@ public class EmployeePayrollDBService {
 		return employeePayrollDBService;
 	}
 
-	public List<EmployeePayrollData> readData() {
+	public List<EmployeePayrollData> readData() throws EmployeePayrollException {
 		String sql = "SELECT * FROM employee_payroll";
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		try (Connection connection = this.getConnection();) {
 			Statement statement = connection.createStatement();
 			ResultSet resultSet = statement.executeQuery(sql);
-			while (resultSet.next()) {
-				int id = resultSet.getInt("id");
-				String name = resultSet.getString("name");
-				double basic_pay = resultSet.getDouble("basic_pay");
-				char gender = resultSet.getString("gender").charAt(0);
-				employeePayrollList.add(new EmployeePayrollData(id, name, basic_pay, gender));
-			}
+			employeePayrollList = this.getEmployeePayrollData(resultSet);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -121,6 +115,22 @@ public class EmployeePayrollDBService {
 		} catch (SQLException e) {
 			throw new EmployeePayrollException("unable to prepare statement");
 		}
+	}
+
+	public List<EmployeePayrollData> getEmployeePayrollDataWithStartDateInGivenRange() throws EmployeePayrollException {
+		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
+
+		try {
+			Connection connection = this.getConnection();
+			String sql = "select * from employee_payroll where start BETWEEN CAST('2018-01-01' AS DATE) and DATE(NOW());";
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			employeePayrollList = getEmployeePayrollData(resultSet);
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employeePayrollList;
 	}
 
 }
