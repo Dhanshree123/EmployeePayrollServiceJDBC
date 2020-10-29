@@ -133,4 +133,79 @@ public class EmployeePayrollDBService {
 		return employeePayrollList;
 	}
 
+	public double getSumOfSalary() throws EmployeePayrollException {
+		double sum = 0;
+		try {
+			Connection connection = this.getConnection();
+			String sql = "select sum(basic_pay) from employee_payroll where gender='M' group by gender";
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			resultSet.first();
+			sum = resultSet.getDouble(1);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("unable to execute query");
+		}
+		return sum;
+	}
+
+	public double getMaxOfSalary() throws EmployeePayrollException {
+		double max = 0;
+		try {
+			Connection connection = this.getConnection();
+			String sql = "select max(basic_pay) from employee_payroll where gender='M' group by gender";
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			resultSet.first();
+			max = resultSet.getDouble(1);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("unable to execute query");
+		}
+		return max;
+	}
+
+	public double getMinOfSalary() throws EmployeePayrollException {
+		double min = 0;
+		try {
+			Connection connection = this.getConnection();
+			String sql = "select min(basic_pay) from employee_payroll where gender='M' group by gender";
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			resultSet.first();
+			min = resultSet.getDouble(1);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("unable to execute query");
+		}
+		return min;
+	}
+
+	public int getNumOfMale() throws EmployeePayrollException {
+		int numOfMale = 0;
+		try {
+			Connection connection = this.getConnection();
+			String sql = "select count(id) from employee_payroll where gender='M' group by gender";
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			resultSet.first();
+			numOfMale = resultSet.getInt(1);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("unable to execute query");
+		}
+		return numOfMale;
+	}
+
+	public int getNumOfFemale() throws EmployeePayrollException {
+		int numOfFemale = 0;
+		try {
+			Connection connection = this.getConnection();
+			String sql = "select count(id) from employee_payroll where gender='F' group by gender";
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			resultSet.first();
+			numOfFemale = resultSet.getInt(1);
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("unable to execute query");
+		}
+		return numOfFemale;
+	}
+
 }

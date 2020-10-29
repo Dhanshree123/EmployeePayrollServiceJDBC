@@ -58,4 +58,17 @@ public class EmployeePayrollTest {
 		Assert.assertTrue(result);
 	}
 
+	@Test
+	public void givenEmployeeDataRetrieved_ShouldMatchSum() throws EmployeePayrollException {
+		EmployeePayroll employeePayroll = new EmployeePayroll();
+		double sum = employeePayroll.getEmployeeSalarySum();
+		double max = employeePayroll.getEmployeeSalaryMax();
+		double min = employeePayroll.getEmployeeSalaryMin();
+		int numOfMale = employeePayroll.getNumOfMaleEmployee();
+		int numOfFemale = employeePayroll.getNumOfFemaleEmployee();
+		boolean result = (sum == 4000000.0) && (max == 3000000.0) && (min == 1000000.0) && (numOfFemale == 2)
+				&& (numOfMale == 2);
+		Assert.assertTrue(result);
+
+	}
 }

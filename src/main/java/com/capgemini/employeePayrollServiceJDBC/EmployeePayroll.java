@@ -97,4 +97,28 @@ public class EmployeePayroll {
 		return employeePayrollData;
 	}
 
+	public double getEmployeeSalarySum() throws EmployeePayrollException {
+		double sum = employeePayrollDBService.getSumOfSalary();
+		return sum;
+	}
+
+	public double getEmployeeSalaryMax() throws EmployeePayrollException {
+		double max = employeePayrollDBService.getMaxOfSalary();
+		return max;
+	}
+
+	public double getEmployeeSalaryMin() throws EmployeePayrollException {
+		double min = employeePayrollDBService.getMinOfSalary();
+		return min;
+	}
+
+	public int getNumOfMaleEmployee() throws EmployeePayrollException {
+		int numOfMale = employeePayrollDBService.getNumOfMale();
+		return numOfMale;
+	}
+
+	public int getNumOfFemaleEmployee() throws EmployeePayrollException {
+		int numOfFemale = employeePayrollDBService.getNumOfFemale();
+		return numOfFemale;
+	}
 }
