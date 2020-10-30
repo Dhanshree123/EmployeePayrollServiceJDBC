@@ -1,11 +1,13 @@
 package com.capgemini.employeePayrollServiceJDBC;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -97,9 +99,10 @@ public class EmployeePayrollDBService {
 			while (resultSet.next()) {
 				int id = resultSet.getInt("id");
 				String name = resultSet.getString("name");
+				LocalDate start = resultSet.getDate("start").toLocalDate();
 				double basic_pay = resultSet.getDouble("basic_pay");
 				char gender = resultSet.getString("gender").charAt(0);
-				employeePayrollDataList.add(new EmployeePayrollData(id, name, basic_pay, gender));
+				employeePayrollDataList.add(new EmployeePayrollData(id, name, start, basic_pay, gender));
 			}
 		} catch (SQLException e) {
 			throw new EmployeePayrollException("unable to read data from database");
@@ -206,6 +209,35 @@ public class EmployeePayrollDBService {
 			throw new EmployeePayrollException("unable to execute query");
 		}
 		return numOfFemale;
+	}
+
+	public EmployeePayrollData addEmployeeToPayroll(String name, double basic_pay, LocalDate startDate, String gender)
+			throws EmployeePayrollException {
+		int employeeId = -1;
+		EmployeePayrollData employeePayrollData = null;
+		String sql = String.format(
+				"INSERT INTO employee_payroll (name,gender,basic_pay,start) " + "VALUES	('%s','%s',%s,'%s')", name,
+				gender, basic_pay, Date.valueOf(startDate));
+		try {
+			Connection connection = this.getConnection();
+			Statement statement = connection.createStatement();
+			int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+			System.out.println("hiiiiiiiiiiii");
+			if (rowAffected == 1) {
+				ResultSet resultSet = statement.getGeneratedKeys();
+				if (resultSet.next())
+					employeeId = resultSet.getInt(1);
+			}
+			System.out.println("kkkkkkkkk");
+			System.out.println(startDate);
+			employeePayrollData = new EmployeePayrollData(employeeId, name, startDate, basic_pay, gender.charAt(0));
+			System.out.println("zzz");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println(employeePayrollData.name);
+		System.out.println(employeePayrollData.start);
+		return employeePayrollData;
 	}
 
 }

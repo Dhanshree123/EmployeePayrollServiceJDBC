@@ -1,5 +1,6 @@
 package com.capgemini.employeePayrollServiceJDBC;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -120,5 +121,10 @@ public class EmployeePayroll {
 	public int getNumOfFemaleEmployee() throws EmployeePayrollException {
 		int numOfFemale = employeePayrollDBService.getNumOfFemale();
 		return numOfFemale;
+	}
+
+	public void addEmployeePayroll(String name, double basic_pay, LocalDate startDate, String gender)
+			throws EmployeePayrollException {
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, basic_pay, startDate, gender));
 	}
 }

@@ -1,5 +1,6 @@
 package com.capgemini.employeePayrollServiceJDBC;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,5 +71,15 @@ public class EmployeePayrollTest {
 				&& (numOfMale == 2);
 		Assert.assertTrue(result);
 
+	}
+
+	@Test
+	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
+		EmployeePayroll employeePayroll = new EmployeePayroll();
+		employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO);
+		employeePayroll.addEmployeePayroll("Mini", 5000000.0, LocalDate.now(), "F");
+		System.out.println("ssss");
+		boolean result = employeePayroll.checkEmployeePayrollInSyncWithDB("Mini");
+		Assert.assertTrue(result);
 	}
 }
