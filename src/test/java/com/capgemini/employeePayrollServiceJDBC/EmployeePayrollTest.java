@@ -78,7 +78,6 @@ public class EmployeePayrollTest {
 		EmployeePayroll employeePayroll = new EmployeePayroll();
 		employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO);
 		employeePayroll.addEmployeePayroll("Mini", 5000000.0, LocalDate.now(), "F");
-		System.out.println("ssss");
 		boolean result = employeePayroll.checkEmployeePayrollInSyncWithDB("Mini");
 		Assert.assertTrue(result);
 	}
