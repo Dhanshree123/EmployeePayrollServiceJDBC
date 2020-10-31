@@ -234,12 +234,14 @@ public class EmployeePayrollDBService {
 		return employeePayrollData;
 	}
 
-	public EmployeePayrollData addEmployeeToPayroll(String name, double basic_pay, LocalDate startDate, String gender) {
+	public EmployeePayrollData addEmployeeToPayroll(String name, double basic_pay, LocalDate startDate, String gender)
+			throws EmployeePayrollException {
 		int employeeId = -1;
 		EmployeePayrollData employeePayrollData = null;
 		Connection connection = null;
 		try {
 			connection = this.getConnection();
+			connection.setAutoCommit(false);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -256,6 +258,12 @@ public class EmployeePayrollDBService {
 
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+				throw new EmployeePayrollException("insert error");
+			}
 		}
 		try (Statement statement = connection.createStatement()) {
 			double deductions = basic_pay * 0.2;
@@ -268,10 +276,31 @@ public class EmployeePayrollDBService {
 					employeeId, basic_pay, deductions, taxablePay, tax, netPay);
 			int rowAffected = statement.executeUpdate(sql);
 			if (rowAffected == 1) {
-				employeePayrollData = new EmployeePayrollData(employeeId, name, startDate,basic_pay, gender.charAt(0));
+				employeePayrollData = new EmployeePayrollData(employeeId, name, startDate, basic_pay, gender.charAt(0));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+				return employeePayrollData;
+			} catch (SQLException e1) {
+
+				e1.printStackTrace();
+				throw new EmployeePayrollException("query error");
+			}
+		}
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new EmployeePayrollException("error in commiting transaction");
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+				throw new EmployeePayrollException("error in closing connection");
+			}
 		}
 		return employeePayrollData;
 	}
