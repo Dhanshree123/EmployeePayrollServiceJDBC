@@ -78,8 +78,8 @@ public class EmployeePayrollTest {
 	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
 		EmployeePayroll employeePayroll = new EmployeePayroll();
 		employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO);
-		employeePayroll.addEmployeePayroll("Mini", 5000000.0, LocalDate.now(), "F");
+		employeePayroll.addEmployeePayroll("Mini", 5000000.0, LocalDate.now(), "F",101, "Finance", "Capgemini");
 		boolean result = employeePayroll.checkEmployeePayrollInSyncWithDB("Mini");
-		Assert.assertTrue(result);
+	    Assert.assertTrue(result);
 	}
 }

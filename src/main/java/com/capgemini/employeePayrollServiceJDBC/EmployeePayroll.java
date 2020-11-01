@@ -123,8 +123,9 @@ public class EmployeePayroll {
 		return numOfFemale;
 	}
 
-	public void addEmployeePayroll(String name, double basic_pay, LocalDate startDate, String gender)
-			throws EmployeePayrollException {
-		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, basic_pay, startDate, gender));
+	public void addEmployeePayroll(String name, double basic_pay, LocalDate start, String gender, int companyId,
+			String companyName, String departmentName) throws EmployeePayrollException {
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, basic_pay, start, gender, companyId,
+				departmentName, companyName));
 	}
 }
