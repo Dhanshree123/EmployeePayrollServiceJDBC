@@ -1,5 +1,7 @@
 package com.capgemini.employeePayrollServiceJDBC;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 
 import java.util.Arrays;
@@ -78,8 +80,27 @@ public class EmployeePayrollTest {
 	public void givenNewEmployee_WhenAdded_ShouldSyncWithDB() throws EmployeePayrollException {
 		EmployeePayroll employeePayroll = new EmployeePayroll();
 		employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO);
-		employeePayroll.addEmployeePayroll("Mini", 5000000.0, LocalDate.now(), "F",101, "Finance", "Capgemini");
+		employeePayroll.addEmployeePayroll("Mini", 5000000.0, LocalDate.now(), "F", 101, "Finance", "Capgemini");
 		boolean result = employeePayroll.checkEmployeePayrollInSyncWithDB("Mini");
-	    Assert.assertTrue(result);
+		Assert.assertTrue(result);
+	}
+
+	@Test
+	public void given6Employee_WhenAddedDatabase_ShouldMatchEntries() throws EmployeePayrollException {
+		EmployeePayrollData[] arrayEmps = { new EmployeePayrollData(11, "Seema", 100000.0, LocalDate.now(), 'F'),
+				new EmployeePayrollData(12, "hema", 200000.0, LocalDate.now(), 'F'),
+				new EmployeePayrollData(13, "riya", 700000.0, LocalDate.now(), 'F'),
+				new EmployeePayrollData(14, "nidhi", 900000.0, LocalDate.now(), 'F'),
+				new EmployeePayrollData(15, "jayesh", 800000.0, LocalDate.now(), 'M'),
+				new EmployeePayrollData(16, "chintu", 500000.0, LocalDate.now(), 'M'),
+
+		};
+		EmployeePayroll employeePayroll = new EmployeePayroll();
+		// employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO);
+		Instant start = Instant.now();
+		employeePayroll.addEmployeeToPayroll(Arrays.asList(arrayEmps));
+		Instant end = Instant.now();
+		System.out.println("Duration without thread   ........    " + Duration.between(start, end));
+		Assert.assertEquals(15, employeePayroll.countNumberOfEmployees(EmployeePayroll.IOService.REST_IO));
 	}
 }

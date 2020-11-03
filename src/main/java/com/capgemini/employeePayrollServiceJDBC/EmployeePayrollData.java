@@ -18,6 +18,12 @@ public class EmployeePayrollData {
 		this.basic_pay = basic_pay;
 	}
 
+	public EmployeePayrollData(int id, String name, double basic_pay, LocalDate start, char gender) {
+		this(id, name, basic_pay);
+		this.start = start;
+		this.gender = gender;
+	}
+
 	public EmployeePayrollData(int id, String name, LocalDate start, double basic_pay, char gender, int companyId,
 			String departmentName, String companyName) {
 		this(id, name, basic_pay);

@@ -28,7 +28,7 @@ public class EmployeePayrollDBService {
 	}
 
 	public List<EmployeePayrollData> readData() throws EmployeePayrollException {
-		String sql = "SELECT * FROM employee";
+		String sql = "SELECT * FROM employee,payroll,department,company;";
 		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
 		try (Connection connection = this.getConnection();) {
 			Statement statement = connection.createStatement();
@@ -215,8 +215,8 @@ public class EmployeePayrollDBService {
 		return numOfFemale;
 	}
 
-	public EmployeePayrollData addEmployeeToPayrollUC7(String name, double basic_pay, LocalDate startDate,
-			String gender, int companyId, String companyName, String departmentName) throws EmployeePayrollException {
+	public EmployeePayrollData addEmployeeToPayrollUC7(int id, String name, double basic_pay, LocalDate startDate,
+			char gender) throws EmployeePayrollException {
 		int employeeId = -1;
 		EmployeePayrollData employeePayrollData = null;
 		String sql = String.format(
@@ -231,8 +231,7 @@ public class EmployeePayrollDBService {
 				if (resultSet.next())
 					employeeId = resultSet.getInt(1);
 			}
-			employeePayrollData = new EmployeePayrollData(employeeId, name, startDate, basic_pay, gender.charAt(0),
-					companyId, departmentName, companyName);
+			employeePayrollData = new EmployeePayrollData(employeeId, name, basic_pay, startDate, gender);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -347,6 +346,11 @@ public class EmployeePayrollDBService {
 			}
 		}
 		return employeePayrollData;
+	}
+
+	public EmployeePayrollData addEmployeeToPayroll(String name, double salary, LocalDate startDate, String string) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

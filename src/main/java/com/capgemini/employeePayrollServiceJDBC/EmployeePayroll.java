@@ -128,4 +128,37 @@ public class EmployeePayroll {
 		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(name, basic_pay, start, gender, companyId,
 				departmentName, companyName));
 	}
+
+	public void addEmployeeToPayroll(int id, String name, double salary, LocalDate startDate, char gender)
+			throws EmployeePayrollException {
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC7(id, name, salary, startDate, gender));
+	}
+
+	/*
+	 * public void addEmployeeToPayroll(int id, String name, double salary,
+	 * LocalDate startDate, char gender) throws EmployeePayrollException {
+	 * employeePayrollList.add( employeePayrollDBService.addEmployeeToPayroll(id,
+	 * name, salary, startDate, Character.toString(gender))); }
+	 */
+	public void addEmployeeToPayroll(List<EmployeePayrollData> employeePayrollDataList) {
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			System.out.println("Employee Being Added" + employeePayrollData.name);
+			try {
+				this.addEmployeeToPayroll(employeePayrollData.empId, employeePayrollData.name,
+						employeePayrollData.basic_pay, employeePayrollData.start, employeePayrollData.gender);
+			} catch (EmployeePayrollException e) {
+				e.printStackTrace();
+			}
+
+			System.out.println("Employee Added" + employeePayrollData.name);
+
+		});
+		System.out.print(this.employeePayrollList);
+	}
+
+	public long countNumberOfEmployees(IOService io) {
+		if (io.equals(IOService.FILE_IO))
+			return new EmployeePayrollFileIOService().countEntries();
+		return employeePayrollList.size();
+	}
 }
