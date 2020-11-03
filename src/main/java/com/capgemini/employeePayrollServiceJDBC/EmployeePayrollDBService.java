@@ -215,8 +215,8 @@ public class EmployeePayrollDBService {
 		return numOfFemale;
 	}
 
-	public EmployeePayrollData addEmployeeToPayrollUC7(int id, String name, double basic_pay, LocalDate startDate,
-			char gender) throws EmployeePayrollException {
+	public EmployeePayrollData addEmployeeToPayrollUC7(String name, double basic_pay, LocalDate startDate, char gender)
+			throws EmployeePayrollException {
 		int employeeId = -1;
 		EmployeePayrollData employeePayrollData = null;
 		String sql = String.format(
@@ -348,9 +348,34 @@ public class EmployeePayrollDBService {
 		return employeePayrollData;
 	}
 
-	public EmployeePayrollData addEmployeeToPayroll(String name, double salary, LocalDate startDate, String string) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<EmployeePayrollData> readDataFromEmployeePayroll() throws EmployeePayrollException {
+		String sql = "SELECT * FROM employee;";
+		List<EmployeePayrollData> employeePayrollList = new ArrayList<>();
+		try (Connection connection = this.getConnection();) {
+			Statement statement = connection.createStatement();
+			ResultSet resultSet = statement.executeQuery(sql);
+			employeePayrollList = this.getEmployeePayrollDataThread(resultSet);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return employeePayrollList;
 	}
 
+	private List<EmployeePayrollData> getEmployeePayrollDataThread(ResultSet resultSet)
+			throws EmployeePayrollException {
+		List<EmployeePayrollData> employeePayrollDataList = new ArrayList<>();
+		try {
+			while (resultSet.next()) {
+				int id = resultSet.getInt("empid");
+				String name = resultSet.getString("name");
+				LocalDate start = resultSet.getDate("start").toLocalDate();
+				double basic_pay = resultSet.getDouble("basic_pay");
+				char gender = resultSet.getString("gender").charAt(0);
+				employeePayrollDataList.add(new EmployeePayrollData(id, name, basic_pay, start, gender));
+			}
+		} catch (SQLException e) {
+			throw new EmployeePayrollException("unable to read data from database");
+		}
+		return employeePayrollDataList;
+	}
 }

@@ -2,7 +2,9 @@ package com.capgemini.employeePayrollServiceJDBC;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class EmployeePayroll {
@@ -129,9 +131,9 @@ public class EmployeePayroll {
 				departmentName, companyName));
 	}
 
-	public void addEmployeeToPayroll(int id, String name, double salary, LocalDate startDate, char gender)
+	public void addEmployeeToPayroll(String name, double salary, LocalDate startDate, char gender)
 			throws EmployeePayrollException {
-		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC7(id, name, salary, startDate, gender));
+		employeePayrollList.add(employeePayrollDBService.addEmployeeToPayrollUC7(name, salary, startDate, gender));
 	}
 
 	/*
@@ -144,8 +146,8 @@ public class EmployeePayroll {
 		employeePayrollDataList.forEach(employeePayrollData -> {
 			System.out.println("Employee Being Added" + employeePayrollData.name);
 			try {
-				this.addEmployeeToPayroll(employeePayrollData.empId, employeePayrollData.name,
-						employeePayrollData.basic_pay, employeePayrollData.start, employeePayrollData.gender);
+				this.addEmployeeToPayroll(employeePayrollData.name, employeePayrollData.basic_pay,
+						employeePayrollData.start, employeePayrollData.gender);
 			} catch (EmployeePayrollException e) {
 				e.printStackTrace();
 			}
@@ -160,5 +162,43 @@ public class EmployeePayroll {
 		if (io.equals(IOService.FILE_IO))
 			return new EmployeePayrollFileIOService().countEntries();
 		return employeePayrollList.size();
+	}
+
+	public void addEmployeeToPayrollWithThread(List<EmployeePayrollData> employeePayrollDataList) {
+		Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+		employeePayrollDataList.forEach(employeePayrollData -> {
+			Runnable task = () -> {
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+				System.out.println("Employee Being Added: " + Thread.currentThread().getName());
+				try {
+					this.addEmployeeToPayroll(employeePayrollData.name, employeePayrollData.basic_pay,
+							employeePayrollData.start, employeePayrollData.gender);
+				} catch (EmployeePayrollException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+				System.out.println("Employee Added" + Thread.currentThread().getName());
+
+			};
+			Thread thread = new Thread(task, employeePayrollData.name);
+			thread.start();
+		});
+		while (employeeAdditionStatus.containsValue(false)) {
+			try {
+				Thread.sleep(10);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		System.out.println(this.employeePayrollList);
+	}
+
+	public List<EmployeePayrollData> readEmployeePayrollDataThread(IOService io) throws EmployeePayrollException {
+		if (io.equals(IOService.FILE_IO))
+			employeePayrollList = new EmployeePayrollFileIOService().readData();
+		if (io.equals(IOService.DB_IO))
+			employeePayrollList = employeePayrollDBService.readDataFromEmployeePayroll();
+		return employeePayrollList;
 	}
 }

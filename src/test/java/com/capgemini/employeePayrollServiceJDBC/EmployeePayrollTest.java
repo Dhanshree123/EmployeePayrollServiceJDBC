@@ -96,11 +96,11 @@ public class EmployeePayrollTest {
 
 		};
 		EmployeePayroll employeePayroll = new EmployeePayroll();
-		// employeePayroll.readEmployeePayrollData(EmployeePayroll.IOService.DB_IO);
+		employeePayroll.readEmployeePayrollDataThread(EmployeePayroll.IOService.DB_IO);
 		Instant start = Instant.now();
-		employeePayroll.addEmployeeToPayroll(Arrays.asList(arrayEmps));
+		employeePayroll.addEmployeeToPayrollWithThread(Arrays.asList(arrayEmps));
 		Instant end = Instant.now();
-		System.out.println("Duration without thread   ........    " + Duration.between(start, end));
-		Assert.assertEquals(15, employeePayroll.countNumberOfEmployees(EmployeePayroll.IOService.REST_IO));
+		System.out.println("Duration with thread" + Duration.between(start, end));
+		Assert.assertEquals(9, employeePayroll.countNumberOfEmployees(EmployeePayroll.IOService.REST_IO));
 	}
 }
