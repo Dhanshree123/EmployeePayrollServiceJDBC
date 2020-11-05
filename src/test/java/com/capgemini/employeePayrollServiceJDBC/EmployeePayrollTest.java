@@ -8,9 +8,21 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
+import com.google.gson.Gson;
+
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
+
 public class EmployeePayrollTest {
+
+	@Before
+	public void setup() {
+		RestAssured.baseURI = "https://localhost";
+		RestAssured.port = 3000;
+	}
 
 	@Test
 	public void given3EmployeesWhenWrittenToFileShouldReturnEmployeeEntries() {
@@ -96,11 +108,27 @@ public class EmployeePayrollTest {
 
 		};
 		EmployeePayroll employeePayroll = new EmployeePayroll();
-		employeePayroll.readEmployeePayrollDataThread(EmployeePayroll.IOService.DB_IO);
+		// employeePayroll.readEmployeePayrollDataThread(EmployeePayroll.IOService.DB_IO);
 		Instant start = Instant.now();
 		employeePayroll.addEmployeeToPayrollWithThread(Arrays.asList(arrayEmps));
 		Instant end = Instant.now();
 		System.out.println("Duration with thread" + Duration.between(start, end));
-		Assert.assertEquals(9, employeePayroll.countNumberOfEmployees(EmployeePayroll.IOService.REST_IO));
+		Assert.assertEquals(9, employeePayroll.countNumberOfEmployees(EmployeePayroll.IOService.DB_IO));
+	}
+
+	@Test
+	public void givenEmployeeDataInJsonServer_whenRetreived_shouldMatchCount() {
+		EmployeePayrollData[] arrayEmps = getEmployeeList();
+		EmployeePayroll employeePayroll;
+		employeePayroll = new EmployeePayroll(Arrays.asList(arrayEmps));
+		long entries = employeePayroll.countEntries(EmployeePayroll.IOService.REST_IO);
+		Assert.assertEquals(2, entries);
+	}
+
+	private EmployeePayrollData[] getEmployeeList() {
+		Response response = RestAssured.get("/employee");
+		System.out.println("Employee Data at jsonserver:\n" + response.asString());
+		EmployeePayrollData[] arrayOfEmps = new Gson().fromJson(response.asString(), EmployeePayrollData[].class);
+		return arrayOfEmps;
 	}
 }

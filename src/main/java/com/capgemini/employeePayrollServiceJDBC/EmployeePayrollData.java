@@ -1,6 +1,7 @@
 package com.capgemini.employeePayrollServiceJDBC;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class EmployeePayrollData {
 	public int empId;
@@ -36,6 +37,11 @@ public class EmployeePayrollData {
 
 	public String toString() {
 		return "EmployeeId =" + empId + " ,name=" + name + " ,basic_pay=" + basic_pay + " ,start=" + start;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, gender, basic_pay, start);
 	}
 
 	@Override

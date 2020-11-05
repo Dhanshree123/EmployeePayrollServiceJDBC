@@ -17,7 +17,7 @@ public class EmployeePayroll {
 
 	public EmployeePayroll(List<EmployeePayrollData> employeePayrollList) {
 		this();
-		this.employeePayrollList = employeePayrollList;
+		this.employeePayrollList = new ArrayList<>(employeePayrollList);
 	}
 
 	public EmployeePayroll() {
